@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- <color name="alarm_taupe">#433c2d</color> -->
+    <!-- <color name="text_tab">#ffffff</color> -->
+    <!-- <color name="tab_divider">#554f42</color> -->
+    <!-- <color name="tab_background">#423b2c</color> -->
+
+    <color name="alarm_ecru_white">#F7F5EB</color>
+    <color name="alarm_fire_bush">#E6A02F</color>
+    <color name="alarm_persian_red">#C4362F</color>
+    <color name="alarm_boston_blue">#3A87AD</color>
+    <color name="alarm_taupe">#433C2D</color>
+    <color name="alarm_mine_shaft">#333333</color>
+    <color name="pressed_myactionbar">#CCC4362F</color>
+
+</resources>

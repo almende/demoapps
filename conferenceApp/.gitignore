@@ -1,0 +1,11 @@
+bin
+gen
+target
+.settings
+.project
+.classpath
+.eveagents
+.evecookies
+.testStates
+pom.xml.asc
+pom.xml.versionsBackup

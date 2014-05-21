@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="pref_xmpp_settings"
+        android:title="@string/pref_xmpp_title" >
+        <EditTextPreference
+            android:defaultValue="example"
+            android:key="@string/xmppUsername_key"
+            android:persistent="true"
+            android:title="@string/xmppUsername" />
+        <EditTextPreference
+            android:defaultValue="changeme"
+            android:inputType="textPassword"
+            android:key="@string/xmppPassword_key"
+            android:persistent="true"
+            android:title="@string/xmppPassword" />
+        <EditTextPreference
+            android:defaultValue="openid.almende.org"
+            android:key="@string/xmppHost_key"
+            android:persistent="true"
+            android:title="@string/xmppHost" />
+        <EditTextPreference
+            android:defaultValue="Smack"
+            android:key="@string/xmppResource_key"
+            android:persistent="true"
+            android:title="@string/xmppResource" />
+        <EditTextPreference
+            android:defaultValue="5222"
+            android:digits="0123456789"
+            android:inputType="number"
+            android:key="@string/xmppPort_key"
+            android:persistent="true"
+            android:title="@string/xmppPort" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

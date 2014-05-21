@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Conference App</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_activity_conference_app">ConferenceApp</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="eve_service">Eve Service</string>
+    <string name="pref_xmpp_title">XMPP settings</string>
+    <string name="pref_cloud_title">Cloud settings</string>
+    <string name="xmppUsername_key">xmppUsername</string>
+    <string name="xmppPassword_key">xmppPassword</string>
+    <string name="xmppHost_key">xmppHost</string>
+    <string name="xmppPort_key">xmppPort</string>
+    <string name="xmppResource_key">xmppResource</string>
+    <string name="xmppUsername">Username</string>
+    <string name="xmppPassword">Password</string>
+    <string name="xmppHost">Host</string>
+    <string name="xmppPort">Port</string>
+    <string name="xmppResource">Resource</string>
+    <string name="refresh">Refresh</string>
+
+</resources>
