@@ -4,12 +4,15 @@
  */
 package com.almende.demo.conferenceApp;
 
+import java.io.Serializable;
+
 /**
  * The Class InfoBean.
  */
-public class InfoBean {
-	private String	locVector	= null;
-	private String	deviceId	= null;
+public class InfoBean implements Serializable {
+	private static final long	serialVersionUID	= 1580662192874181492L;
+	private String				locVector			= null;
+	private String				deviceId			= null;
 	
 	/**
 	 * Instantiates a new info bean.
