@@ -1,11 +1,18 @@
+/*
+ * Copyright: Almende B.V. (2014), Rotterdam, The Netherlands
+ * License: The Apache Software License, Version 2.0
+ */
 package com.almende.demo.conferenceApp;
 
 import android.app.Activity;
 import android.os.Bundle;
 
+/**
+ * The Class SettingsActivity.
+ */
 public class SettingsActivity extends Activity {
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		// Display the fragment as the main content.

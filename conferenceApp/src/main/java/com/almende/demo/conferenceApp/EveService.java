@@ -1,3 +1,7 @@
+/*
+ * Copyright: Almende B.V. (2014), Rotterdam, The Netherlands
+ * License: The Apache Software License, Version 2.0
+ */
 package com.almende.demo.conferenceApp;
 
 import java.io.IOException;
@@ -26,25 +30,44 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import de.greenrobot.event.EventBus;
 
+/**
+ * The Class EveService.
+ */
 public class EveService extends Service {
+	
+	/**
+	 * The Constant myThread.
+	 */
 	public static final HandlerThread	myThread	= new HandlerThread(
 															EveService.class
 																	.getCanonicalName());
+	
+	/**
+	 * The Constant NEWTASKID.
+	 */
 	public static final int				NEWTASKID	= 0;
 	private WsClientTransport			client		= null;
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Service#onBind(android.content.Intent)
+	 */
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(final Intent intent) {
 		return null;
 	}
 	
+	/**
+	 * Setup base notification.
+	 */
 	public void setupBaseNotification() {
-		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Intent intent = new Intent(this, ConferenceBaseActivity.class);
-		PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		final NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		final Intent intent = new Intent(this, ConferenceBaseActivity.class);
+		final PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
 		
 		// Build notification
-		Notification noti = new Notification.Builder(this)
+		final Notification noti = new Notification.Builder(this)
 				.setContentTitle("Conference App running!")
 				.setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent)
 				.build();
@@ -54,9 +77,16 @@ public class EveService extends Service {
 		notificationManager.notify(NEWTASKID, noti);
 	}
 	
+	/**
+	 * Inits the eve.
+	 * 
+	 * @param ctx
+	 *            the ctx
+	 */
 	public void initEve(final Context ctx) {
-		Handler myHandler = new Handler(myThread.getLooper());
+		final Handler myHandler = new Handler(myThread.getLooper());
 		myHandler.post(new Runnable() {
+			@Override
 			public void run() {
 				System.err.println("Eve Service ThreadId:"
 						+ Thread.currentThread().getId());
@@ -68,10 +98,16 @@ public class EveService extends Service {
 		});
 	}
 	
+	/**
+	 * Inits the transport.
+	 * 
+	 * @param ctx
+	 *            the ctx
+	 */
 	public void initTransport(final Context ctx) {
 		
 		final WebsocketTransportConfig clientConfig = new WebsocketTransportConfig();
-		TelephonyManager tm = (TelephonyManager) ctx
+		final TelephonyManager tm = (TelephonyManager) ctx
 				.getSystemService(Context.TELEPHONY_SERVICE);
 		
 		clientConfig.setId(tm.getDeviceId());
@@ -81,7 +117,7 @@ public class EveService extends Service {
 		try {
 			client.connect();
 			client.send("Good day to you!");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("IOException during connect/send");
 			e.printStackTrace();
 		}
@@ -91,35 +127,53 @@ public class EveService extends Service {
 	/**
 	 * Starts the service.
 	 * 
+	 * @param intent
+	 *            the intent
+	 * @param flags
+	 *            the flags
+	 * @param startId
+	 *            the start id
+	 * @return the int
 	 * @see super#onStartCommand(android.content.Intent, int, int)
 	 */
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public int onStartCommand(final Intent intent, final int flags, final int startId) {
 		if (!myThread.isAlive()) {
 			myThread.start();
 		}
 		EventBus.getDefault().unregister(this);
 		EventBus.getDefault().register(this);
-		initEve(this.getApplication());
+		initEve(getApplication());
 		
 		return START_STICKY;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Service#onDestroy()
+	 */
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 	}
 	
-	public void onEventAsync(StateEvent event) {
+	/**
+	 * On event async.
+	 * 
+	 * @param event
+	 *            the event
+	 */
+	public void onEventAsync(final StateEvent event) {
 		System.err.println("Service received StateEvent:" + event.getValue()
 				+ " threadId:" + Thread.currentThread().getId());
 		
 		if (event.getValue().equals("ReceivedScan") && client != null) {
 			try {
 				client.send(PositionUtil.getInstance().getCurrent().toString());
-			} catch (JsonProcessingException e) {
+			} catch (final JsonProcessingException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -127,7 +181,7 @@ public class EveService extends Service {
 	
 	private boolean servicesConnected() {
 		// Check that Google Play services is available
-		int resultCode = GooglePlayServicesUtil
+		final int resultCode = GooglePlayServicesUtil
 				.isGooglePlayServicesAvailable(this);
 		// If Google Play services is available
 		if (ConnectionResult.SUCCESS == resultCode) {
@@ -187,6 +241,11 @@ public class EveService extends Service {
 			// Not used, data should be the same.
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.almende.eve.capabilities.handler.Handler#getKey()
+		 */
 		@Override
 		public String getKey() {
 			// Not used, data should be the same.

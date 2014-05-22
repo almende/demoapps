@@ -1,3 +1,7 @@
+/*
+ * Copyright: Almende B.V. (2014), Rotterdam, The Netherlands
+ * License: The Apache Software License, Version 2.0
+ */
 package com.almende.demo.conferenceApp;
 
 import java.util.ArrayList;
@@ -17,6 +21,9 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import de.greenrobot.event.EventBus;
 
+/**
+ * The Class PositionUtil.
+ */
 public class PositionUtil {
 	private final static Logger						LOG			= Logger.getLogger(PositionUtil.class
 																		.getName());
@@ -35,7 +42,13 @@ public class PositionUtil {
 		SSIS.put("rlspot2", 5);
 	}
 	
-	public static void loadSSIDs(String[] ssids) {
+	/**
+	 * Load ssi ds.
+	 * 
+	 * @param ssids
+	 *            the ssids
+	 */
+	public static void loadSSIDs(final String[] ssids) {
 		SSIS.clear();
 		for (int i = 0; i < ssids.length; i++) {
 			SSIS.put(ssids[i], i);
@@ -45,27 +58,51 @@ public class PositionUtil {
 	private PositionUtil() {
 	}
 	
-	public static void setContext(Context ctx) {
+	/**
+	 * Sets the context.
+	 * 
+	 * @param ctx
+	 *            the new context
+	 */
+	public static void setContext(final Context ctx) {
 		PositionUtil.ctx = ctx;
 	}
 	
+	/**
+	 * Gets the single instance of PositionUtil.
+	 * 
+	 * @return single instance of PositionUtil
+	 */
 	public static PositionUtil getInstance() {
 		return instance;
 	}
 	
-	public void doCompare(final String remoteList){
+	/**
+	 * Do compare.
+	 * 
+	 * @param remoteList
+	 *            the remote list
+	 */
+	public void doCompare(final String remoteList) {
 		
 	}
 	
-	
+	/**
+	 * Gets the current.
+	 * 
+	 * @return the current
+	 */
 	public Vector getCurrent() {
 		return current;
 	}
-
+	
+	/**
+	 * Start scan.
+	 */
 	public void startScan() {
 		if (wm == null) {
 			wm = (WifiManager) ctx.getSystemService(Context.WIFI_SERVICE);
-			WifiScanReceiver wifiReciever = new WifiScanReceiver();
+			final WifiScanReceiver wifiReciever = new WifiScanReceiver();
 			ctx.registerReceiver(wifiReciever, new IntentFilter(
 					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		}
@@ -75,33 +112,43 @@ public class PositionUtil {
 		wm.startScan();
 	}
 	
+	/**
+	 * The Class WifiScanReceiver.
+	 */
 	class WifiScanReceiver extends BroadcastReceiver {
 		private List<ScanResult>	wifiList;
 		
-		public void onReceive(Context c, Intent intent) {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.content.BroadcastReceiver#onReceive(android.content.Context,
+		 * android.content.Intent)
+		 */
+		@Override
+		public void onReceive(final Context c, final Intent intent) {
 			wifiList = wm.getScanResults();
-			ArrayList<Double> levels = new ArrayList<Double>(SSIS.size());
+			final ArrayList<Double> levels = new ArrayList<Double>(SSIS.size());
 			for (int i = 0; i < SSIS.size(); i++) {
 				levels.add(-99.0);
 			}
 			
 			for (int i = 0; i < wifiList.size(); i++) {
-				ScanResult res = wifiList.get(i);
+				final ScanResult res = wifiList.get(i);
 				LOG.severe("Found:" + res.SSID + " at level:" + res.level);
 				if (SSIS.containsKey(res.SSID)) {
 					levels.set(SSIS.get(res.SSID), Double.valueOf(res.level));
 				}
 			}
-			double[] list = new double[levels.size()];
+			final double[] list = new double[levels.size()];
 			for (int i = 0; i < levels.size(); i++) {
 				list[i] = levels.get(i);
 			}
-			Vector vector = new BasicVector(list);
-			double norm = vector.fold(Vectors.mkManhattanNormAccumulator());
+			final Vector vector = new BasicVector(list);
+			final double norm = vector.fold(Vectors.mkManhattanNormAccumulator());
 			current = vector.divide(norm);
 			
-			EventBus.getDefault().post(
-					new StateEvent(null, "ReceivedScan"));
+			EventBus.getDefault().post(new StateEvent(null, "ReceivedScan"));
 		}
 	}
 }

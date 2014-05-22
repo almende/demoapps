@@ -1,3 +1,7 @@
+/*
+ * Copyright: Almende B.V. (2014), Rotterdam, The Netherlands
+ * License: The Apache Software License, Version 2.0
+ */
 package com.almende.demo.conferenceApp;
 
 import android.app.Activity;
@@ -11,10 +15,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import de.greenrobot.event.EventBus;
 
+/**
+ * The Class ConferenceBaseActivity.
+ */
 public class ConferenceBaseActivity extends Activity {
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_conference_app);
 		
@@ -27,24 +34,40 @@ public class ConferenceBaseActivity extends Activity {
 		PositionUtil.getInstance().startScan();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.conference_app, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
-	public void refresh(View v){
+	/**
+	 * Refresh.
+	 * 
+	 * @param v
+	 *            the v
+	 */
+	public void refresh(final View v) {
 		PositionUtil.getInstance().startScan();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+		final int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
 		}
@@ -57,22 +80,38 @@ public class ConferenceBaseActivity extends Activity {
 	public static class PlaceholderFragment extends Fragment {
 		private View	view	= null;
 		
-		public void onEventMainThread(StateEvent event) {
+		/**
+		 * On event main thread.
+		 * 
+		 * @param event
+		 *            the event
+		 */
+		public void onEventMainThread(final StateEvent event) {
 			if (event.getValue().equals("ReceivedScan")) {
-				TextView tv = (TextView) view.findViewById(R.id.hello_world);
+				final TextView tv = (TextView) view
+						.findViewById(R.id.hello_world);
 				tv.setText(PositionUtil.getInstance().getCurrent().toString());
 				
 			}
 		}
 		
+		/**
+		 * Instantiates a new placeholder fragment.
+		 */
 		public PlaceholderFragment() {
 			EventBus.getDefault().unregister(this);
 			EventBus.getDefault().register(this);
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.app.Fragment#onCreateView(android.view.LayoutInflater,
+		 * android.view.ViewGroup, android.os.Bundle)
+		 */
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
+		public View onCreateView(final LayoutInflater inflater,
+				final ViewGroup container, final Bundle savedInstanceState) {
 			view = inflater.inflate(R.layout.fragment_conference_app,
 					container, false);
 			return view;
