@@ -92,7 +92,7 @@ public class SwitchBoard {
 				}
 				try {
 					LOG.warning("Forwarding message:"+msg+ " from:"+senderUrl+" to:"+remote);
-					server.send(remote, senderUrl+" "+(String) msg, null);
+					server.send(remote, (String)msg, null);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -121,6 +121,9 @@ public class SwitchBoard {
 			// Not used, data should be the same.
 		}
 		
+		/* (non-Javadoc)
+		 * @see com.almende.eve.capabilities.handler.Handler#getKey()
+		 */
 		@Override
 		public String getKey() {
 			// Not used, data should be the same.
