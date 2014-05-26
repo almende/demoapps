@@ -9,18 +9,22 @@
     tools:context="com.almende.demo.conferenceApp.ConferenceApp$PlaceholderFragment" >
 
     <TextView
-        android:id="@+id/hello_world"
+        android:id="@+id/closeBy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignLeft="@+id/button1"
+        android:layout_below="@+id/button1"
+        android:layout_marginTop="10dp"
+        android:text="@string/closeBy" />
 
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/hello_world"
-        android:layout_below="@+id/hello_world"
-        android:layout_marginTop="15dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="19dp"
+        android:layout_marginTop="18dp"
         android:onClick="refresh"
         android:text="@string/refresh" />
 

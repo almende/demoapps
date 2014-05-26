@@ -4,7 +4,6 @@
  */
 package com.almende.demo.conferenceApp;
 
-import java.io.IOException;
 import java.net.URI;
 
 import android.content.Context;
@@ -12,11 +11,7 @@ import android.telephony.TelephonyManager;
 
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentConfig;
-import com.almende.eve.transform.rpc.annotation.Name;
 import com.almende.eve.transport.ws.WebsocketTransportConfig;
-import com.almende.util.jackson.JOM;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.greenrobot.event.EventBus;
 
@@ -63,42 +58,9 @@ public class ConferenceAgent extends Agent {
 	public void onEventAsync(final StateEvent event) {
 		System.err.println("Service received StateEvent:" + event.getValue()
 				+ " threadId:" + Thread.currentThread().getId());
-		
-		if (event.getValue().equals("ReceivedScan")) {
-			if (serverUri != null) {
-				try {
-					ObjectNode params = JOM.createObjectNode();
-					InfoBean bean = new InfoBean();
-					bean.setDeviceId(getId());
-					bean.setLocVector(PositionUtil.getInstance().getCurrent()
-							.toString());
-					params.put("info",
-							JOM.getInstance().valueToTree(bean));
-					
-					send(serverUri, "receiveInfo", params, null);
-					
-				} catch (final JsonProcessingException e) {
-					e.printStackTrace();
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				System.err
-						.println("Agent is not yet initialized completely, can't send.");
-			}
-		}
-	}
-	
-	/**
-	 * Receive info.
-	 * 
-	 * @param info
-	 *            the info
-	 */
-	public void receiveInfo(@Name("info") InfoBean info) {
-		if (info != null) {
-			System.err.println("Received:" + info.getLocVector() + " from:"
-					+ info.getDeviceId());
+
+		if (event.getValue().equals("closeBy")){
+			System.err.println("I'm close to:"+event.getId());
 		}
 	}
 }

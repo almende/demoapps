@@ -4,7 +4,7 @@
     <string name="app_name">Conference App</string>
     <string name="title_settings">Settings</string>
     <string name="title_activity_conference_app">ConferenceApp</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="wifiList">No scanresults available</string>
     <string name="action_settings">Settings</string>
     <string name="eve_service">Eve Service</string>
     <string name="pref_xmpp_title">XMPP settings</string>
@@ -20,5 +20,6 @@
     <string name="xmppPort">Port</string>
     <string name="xmppResource">Resource</string>
     <string name="refresh">Refresh</string>
+    <string name="closeBy">No devices found closeby.</string>
 
 </resources>

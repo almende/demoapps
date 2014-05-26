@@ -9,7 +9,7 @@ package com.almende.demo.conferenceApp;
  */
 public class StateEvent {
 	private String	value	= "";
-	private String	agentId	= "";
+	private String	id	= "";
 	
 	/**
 	 * Instantiates a new state event.
@@ -19,9 +19,9 @@ public class StateEvent {
 	 * @param value
 	 *            the value
 	 */
-	public StateEvent(final String agentId, final String value) {
+	public StateEvent(final String id, final String value) {
 		setValue(value);
-		setAgentId(agentId);
+		setId(id);
 	}
 	
 	/**
@@ -30,8 +30,8 @@ public class StateEvent {
 	 * @param agentId
 	 *            the agent id
 	 */
-	public StateEvent(final String agentId) {
-		setAgentId(agentId);
+	public StateEvent(final String id) {
+		setId(id);
 	}
 	
 	/**
@@ -58,8 +58,8 @@ public class StateEvent {
 	 * 
 	 * @return the agent id
 	 */
-	public String getAgentId() {
-		return agentId;
+	public String getId() {
+		return id;
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public class StateEvent {
 	 * @param agentId
 	 *            the new agent id
 	 */
-	public void setAgentId(final String agentId) {
-		this.agentId = agentId;
+	public void setId(final String id) {
+		this.id = id;
 	}
 }

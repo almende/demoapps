@@ -30,8 +30,10 @@ public class ConferenceBaseActivity extends Activity {
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 		
-		PositionUtil.setContext(this);
-		PositionUtil.getInstance().startScan();
+//		final TextView tv = (TextView) findViewById(R.id.closeBy);
+//		tv.setText("Scanning, no devices nearby.");
+		DetectionUtil.setContext(this);
+		DetectionUtil.getInstance().startScan();
 	}
 	
 	/*
@@ -54,7 +56,7 @@ public class ConferenceBaseActivity extends Activity {
 	 *            the v
 	 */
 	public void refresh(final View v) {
-		PositionUtil.getInstance().startScan();
+		DetectionUtil.getInstance().startScan();
 	}
 	
 	/*
@@ -87,11 +89,10 @@ public class ConferenceBaseActivity extends Activity {
 		 *            the event
 		 */
 		public void onEventMainThread(final StateEvent event) {
-			if (event.getValue().equals("ReceivedScan")) {
-				final TextView tv = (TextView) view
-						.findViewById(R.id.hello_world);
-				tv.setText(PositionUtil.getInstance().getCurrent().toString());
-				
+			if (event.getValue().equals("closeBy")){
+				final String id = event.getId();
+				final TextView tv = (TextView) view.findViewById(R.id.closeBy);
+				tv.setText("Device:"+id+" is closeby!");
 			}
 		}
 		
