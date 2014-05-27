@@ -25,6 +25,7 @@ public class DetectionUtil {
 	private static Context			ctx			= null;
 	private static BluetoothAdapter	bt			= null;
 	private static final int		CLOSEBY		= 70;
+	private BroadcastReceiver		btReceiver	= null;
 	
 	private DetectionUtil() {
 	}
@@ -63,19 +64,20 @@ public class DetectionUtil {
 		}
 		final TelephonyManager tm = (TelephonyManager) ctx
 				.getSystemService(Context.TELEPHONY_SERVICE);
-		bt.setName("CapeDemo_"+tm.getDeviceId());
+		bt.setName("CapeDemo_" + tm.getDeviceId());
 		BluetoothAdapter ba = BluetoothAdapter.getDefaultAdapter();
-		if (ba.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-		{
-			Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-			discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, -1);
+		if (ba.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+			Intent discoverableIntent = new Intent(
+					BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+			discoverableIntent.putExtra(
+					BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, -1);
 			ctx.startActivity(discoverableIntent);
 		}
 		bt.startDiscovery();
 	}
 	
 	private void initBTReceiver() {
-		final BroadcastReceiver btReceiver = new BroadcastReceiver() {
+		btReceiver = new BroadcastReceiver() {
 			public void onReceive(Context context, Intent intent) {
 				String action = intent.getAction();
 				// When discovery finds
@@ -94,7 +96,9 @@ public class DetectionUtil {
 						LOG.warning("Found BT:" + name + " at level:" + rssi);
 						if (rssi > -CLOSEBY) {
 							EventBus.getDefault().post(
-									new StateEvent(name.replace("CapeDemo_",""), "closeBy"));
+									new StateEvent(name
+											.replace("CapeDemo_", ""),
+											"scanRes"));
 						}
 					}
 				}
@@ -104,5 +108,10 @@ public class DetectionUtil {
 		ctx.registerReceiver(btReceiver, filter); // Don't forget to unregister
 													// during onDestroy
 		
+	}
+	
+	public void close() {
+		bt.cancelDiscovery();
+		ctx.unregisterReceiver(btReceiver);
 	}
 }
