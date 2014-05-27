@@ -16,6 +16,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.almende.demo</groupId>
+			<artifactId>conferenceCommon</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.almende.eve</groupId>
 			<artifactId>eve-bundle-full-embed</artifactId>
 			<version>${eve.version}</version>

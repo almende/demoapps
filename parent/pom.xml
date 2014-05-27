@@ -21,6 +21,7 @@
 	</properties>
 
 	<modules>
+		<module>../conferenceCommon</module>
 		<module>../conferenceCloud</module>
 		<module>../conferenceApp</module>
 	</modules>

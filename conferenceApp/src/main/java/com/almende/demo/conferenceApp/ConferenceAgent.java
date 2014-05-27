@@ -10,6 +10,7 @@ import java.net.URI;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 
+import com.almende.demo.conferenceCloud.Info;
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentConfig;
 import com.almende.eve.capabilities.handler.SimpleHandler;
@@ -109,7 +110,7 @@ public class ConferenceAgent extends Agent {
 		
 		config.setState(stateConfig);
 		
-		setConfig(config);
+		setConfig(config, true);
 		cloud = URI.create(BASEURL + config.getId());
 	}
 	
@@ -149,7 +150,8 @@ public class ConferenceAgent extends Agent {
 	}
 	
 	@Access(AccessType.PUBLIC)
-	public void know(final @Name("id") String id) {
+	public void know(final @Name("id") String id, @Name("info") Info info) {
+		System.err.println("Received info:"+id+" is "+(info.isKnown()?"known":"unknown"));
 		// Todo: interact with user if not done earlier for this url
 		// TODO: Store earlier urls in State.
 	}
