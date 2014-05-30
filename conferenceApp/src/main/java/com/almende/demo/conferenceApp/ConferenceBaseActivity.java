@@ -149,6 +149,9 @@ public class ConferenceBaseActivity extends Activity {
 		@Override
 		public View onCreateView(final LayoutInflater inflater,
 				final ViewGroup container, final Bundle savedInstanceState) {
+			getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+			getActivity().getActionBar().setDisplayShowHomeEnabled(true);
+			
 			try {
 				view = inflater.inflate(R.layout.home_conference_app,
 						container, false);
