@@ -13,8 +13,8 @@ import com.almende.eve.agent.AgentConfig;
 import com.almende.eve.transform.rpc.annotation.Access;
 import com.almende.eve.transform.rpc.annotation.AccessType;
 import com.almende.eve.transform.rpc.annotation.Name;
+import com.almende.eve.transport.http.DebugServlet;
 import com.almende.eve.transport.http.HttpTransportConfig;
-import com.almende.eve.transport.http.debug.DebugServlet;
 import com.almende.eve.transport.ws.WebsocketTransportConfig;
 import com.almende.util.callback.AsyncCallback;
 import com.almende.util.jackson.JOM;
@@ -70,11 +70,13 @@ public class ConferenceCloudAgent extends Agent {
 	 * 
 	 * @param id
 	 *            the id
+	 * @param myInfo
+	 *            the my info
 	 */
 	@Access(AccessType.PUBLIC)
-	public void seen(final @Name("id") String id) {
+	public void seen(final @Name("id") String id, final @Name("info") Info myInfo) {
+
 		// TODO: check if we know url, by contacting the agent and asking.
-		final Info myInfo = new Info();
 		final AsyncCallback<Info> callback = new AsyncCallback<Info>(){
 
 			@Override

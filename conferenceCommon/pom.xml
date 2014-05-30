@@ -9,5 +9,17 @@
 	</parent>
 	<artifactId>conferenceCommon</artifactId>
 
+	<properties>
+		<joda-time.version>2.1</joda-time.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda-time.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>
 

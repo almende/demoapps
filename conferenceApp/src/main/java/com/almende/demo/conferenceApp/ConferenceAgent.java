@@ -6,14 +6,24 @@ package com.almende.demo.conferenceApp;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import org.joda.time.DateTime;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 
 import com.almende.demo.conferenceCloud.Info;
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentConfig;
 import com.almende.eve.capabilities.handler.SimpleHandler;
+import com.almende.eve.scheduling.SimpleSchedulerConfig;
+import com.almende.eve.state.TypedKey;
 import com.almende.eve.state.file.FileStateConfig;
 import com.almende.eve.transform.rpc.RpcTransformFactory;
 import com.almende.eve.transform.rpc.annotation.Access;
@@ -33,8 +43,13 @@ import de.greenrobot.event.EventBus;
  * The Class ConferenceAgent.
  */
 public class ConferenceAgent extends Agent {
-	private static final String	BASEURL	= "ws://10.10.1.180:8082/ws/";
-	private URI					cloud	= null;
+	private static final String								BASEURL		= "ws://10.10.1.180:8082/ws/";
+	private URI												cloud		= null;
+	private static final TypedKey<HashMap<String, Info>>	CONTACTKEY	= new TypedKey<HashMap<String, Info>>(
+																				"contacts") {
+																		};
+	
+	private static Context									ctx			= null;
 	
 	/**
 	 * Instantiates a new conference agent.
@@ -44,12 +59,12 @@ public class ConferenceAgent extends Agent {
 		EventBus.getDefault().register(this);
 	}
 	
-	private void registerAgent(String id) {
+	private void registerAgent(String id, String baseUrl) {
 		try {
 			System.err.println("Registering agent:" + id);
 			final WebsocketTransportConfig clientConfig = new WebsocketTransportConfig();
-			clientConfig.setServerUrl(BASEURL + "management");
-			clientConfig.setId("management_"+id);
+			clientConfig.setServerUrl(baseUrl + "management");
+			clientConfig.setId("management_" + id);
 			
 			final SyncCallback<Boolean> callback = new SyncCallback<Boolean>();
 			final ObjectNode params = JOM.createObjectNode();
@@ -90,17 +105,11 @@ public class ConferenceAgent extends Agent {
 	 *            the ctx
 	 */
 	public void init(Context ctx) {
-		
+		ConferenceAgent.ctx = ctx;
 		final TelephonyManager tm = (TelephonyManager) ctx
 				.getSystemService(Context.TELEPHONY_SERVICE);
-		registerAgent(tm.getDeviceId());
-		
 		final AgentConfig config = new AgentConfig();
 		config.setId(tm.getDeviceId());
-		final WebsocketTransportConfig clientConfig = new WebsocketTransportConfig();
-		clientConfig.setServerUrl(BASEURL + config.getId());
-		
-		config.setTransport(clientConfig);
 		
 		final FileStateConfig stateConfig = new FileStateConfig();
 		stateConfig.setJson(true);
@@ -110,8 +119,37 @@ public class ConferenceAgent extends Agent {
 		
 		config.setState(stateConfig);
 		
+		SimpleSchedulerConfig schedulerConfig = new SimpleSchedulerConfig();
+		config.setScheduler(schedulerConfig);
+		
 		setConfig(config, true);
-		cloud = URI.create(BASEURL + config.getId());
+		if (!getState().containsKey(CONTACTKEY.getKey())) {
+			getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
+		}
+		DetectionUtil.getInstance().startScan();
+		getScheduler().schedule(this.getRpc().buildMsg("refresh", null, null),
+				DateTime.now().plus(60000));
+		
+		reconnect();
+	}
+	
+	public void reconnect() {
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(ctx);
+		final String baseUrl = prefs.getString(
+				ctx.getString(R.string.wsServer_key), BASEURL);
+		
+		registerAgent(getId(), baseUrl);
+		final WebsocketTransportConfig clientConfig = new WebsocketTransportConfig();
+		clientConfig.setServerUrl(baseUrl + getId());
+		this.loadTransports(clientConfig, true);
+		cloud = URI.create(baseUrl + getId());
+	}
+	
+	public void refresh() {
+		DetectionUtil.getInstance().startScan();
+		getScheduler().schedule(this.getRpc().buildMsg("refresh", null, null),
+				DateTime.now().plus(60000));
 	}
 	
 	/**
@@ -121,18 +159,34 @@ public class ConferenceAgent extends Agent {
 	 *            the event
 	 */
 	public void onEventAsync(final StateEvent event) {
-		System.err.println("Service received StateEvent:" + event.getValue()
-				+ " threadId:" + Thread.currentThread().getId());
 		if (event.getValue().equals("scanRes")) {
 			System.err.println("Checking:" + event.getId());
-			check(event.getId());
+			String id = event.getId();
+			
+			if (getState() != null) {
+				HashMap<String, Info> contacts = getState().get(CONTACTKEY);
+				Info info = contacts.get(id);
+				if (info == null) {
+					info = new Info(id);
+				}
+				info.setLastSeen(DateTime.now());
+				contacts.put(id, info);
+				getState().put(CONTACTKEY.getKey(), contacts);
+				EventBus.getDefault().post(
+						new StateEvent(getId(), "listUpdated"));
+				
+				check(id, info);
+			}
+		} else if (event.getValue().equals("settingsUpdated")){
+			reconnect();
 		}
 	}
 	
-	private void check(String id) {
+	private void check(final String id, final Info info) {
 		if (cloud != null) {
 			final ObjectNode params = JOM.createObjectNode();
 			params.put("id", id);
+			params.put("info", JOM.getInstance().valueToTree(info));
 			try {
 				send(cloud, "seen", params);
 			} catch (IOException e) {
@@ -141,18 +195,40 @@ public class ConferenceAgent extends Agent {
 		} else {
 			System.err.println("Not connected?!?");
 		}
-		
-		// TODO:
-		/*
-		 * 1 check locally if this id has been seen before
-		 * 2 contact cloud agent to seek this out
-		 */
 	}
 	
 	@Access(AccessType.PUBLIC)
 	public void know(final @Name("id") String id, @Name("info") Info info) {
-		System.err.println("Received info:"+id+" is "+(info.isKnown()?"known":"unknown"));
-		// Todo: interact with user if not done earlier for this url
-		// TODO: Store earlier urls in State.
+		// TODO: use putIfUnchanged instead.
+		HashMap<String, Info> contacts = getState().get(CONTACTKEY);
+		Info oldinfo = contacts.get(id);
+		if (oldinfo != null) {
+			info = oldinfo.merge(info);
+		}
+		contacts.put(id, info);
+		getState().put(CONTACTKEY.getKey(), contacts);
+		EventBus.getDefault().post(new StateEvent(getId(), "listUpdated"));
+	}
+	
+	public List<Info> getList(final boolean filterIgnored) {
+		List<Info> result = new ArrayList<Info>();
+		if (getState() != null && getState().containsKey("contacts")) {
+			HashMap<String, Info> contacts = getState().get(CONTACTKEY);
+			
+			for (Info info : contacts.values()) {
+				if (info.isKnown() && !info.isIgnored()) {
+					result.add(info);
+				}
+			}
+		}
+		Collections.sort(result);
+		return result;
+	}
+	
+	public Info get(final String id) {
+		if (getState() != null && getState().containsKey("contacts")) {
+			return getState().get(CONTACTKEY).get(id);
+		}
+		return null;
 	}
 }

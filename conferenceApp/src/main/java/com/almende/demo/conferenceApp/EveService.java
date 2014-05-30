@@ -35,6 +35,8 @@ public class EveService extends Service {
 	 */
 	public static final int				NEWTASKID	= 0;
 
+	public static final ConferenceAgent myAgent = new ConferenceAgent();
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -57,7 +59,7 @@ public class EveService extends Service {
 		// Build notification
 		final Notification noti = new Notification.Builder(this)
 				.setContentTitle("Conference App running!")
-				.setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent)
+				.setSmallIcon(R.drawable.teamwork).setContentIntent(pIntent)
 				.build();
 		
 		noti.flags |= Notification.FLAG_FOREGROUND_SERVICE;
@@ -78,7 +80,7 @@ public class EveService extends Service {
 			public void run() {
 				setupBaseNotification();
 				servicesConnected();
-				new ConferenceAgent().init(ctx);
+				myAgent.init(ctx);
 			}
 		});
 	}

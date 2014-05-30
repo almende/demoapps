@@ -70,7 +70,7 @@ public class DetectionUtil {
 			Intent discoverableIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
 			discoverableIntent.putExtra(
-					BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, -1);
+					BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
 			ctx.startActivity(discoverableIntent);
 		}
 		bt.startDiscovery();
