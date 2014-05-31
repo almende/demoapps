@@ -6,6 +6,7 @@ package com.almende.demo.conferenceApp;
 
 import android.app.Activity;
 import android.os.Bundle;
+import de.greenrobot.event.EventBus;
 
 /**
  * The Class SettingsActivity.
@@ -22,6 +23,7 @@ public class SettingsActivity extends Activity {
 	
 	@Override
 	protected void onPause() {
+		EventBus.getDefault().post(new StateEvent(null,"settingsUpdated"));
 		super.onPause();
 	}
 }

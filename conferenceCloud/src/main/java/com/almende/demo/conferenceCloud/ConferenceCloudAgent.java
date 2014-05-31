@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.joda.time.DateTime;
+
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentConfig;
 import com.almende.eve.transform.rpc.annotation.Access;
@@ -17,6 +19,7 @@ import com.almende.eve.transport.http.DebugServlet;
 import com.almende.eve.transport.http.HttpTransportConfig;
 import com.almende.eve.transport.ws.WebsocketTransportConfig;
 import com.almende.util.callback.AsyncCallback;
+import com.almende.util.callback.SyncCallback;
 import com.almende.util.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -26,9 +29,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class ConferenceCloudAgent extends Agent {
 	
-	private static final String BASEURL = "http://10.10.1.180:8082/agents/"; 
-	private static final String WSBASEURL = "ws://10.10.1.180:8082/ws/";
-	private static final String WSCLIENTURL = "wsclient:";
+	private static final String	BASEURL		= "http://127.0.0.1:8082/agents/";
+	private static final String	WSBASEURL	= "ws://192.168.1.108:8082/ws/";
+	private static final String	WSCLIENTURL	= "wsclient:";
+	private DateTime			lastUpdate	= null;
+	private Info				myInfo		= null;
 	
 	/**
 	 * Inits the Conference Cloud Agent.
@@ -63,6 +68,7 @@ public class ConferenceCloudAgent extends Agent {
 		config.setTransport(transports);
 		
 		setConfig(config);
+		myInfo = new Info(getId());
 	}
 	
 	/**
@@ -70,29 +76,29 @@ public class ConferenceCloudAgent extends Agent {
 	 * 
 	 * @param id
 	 *            the id
-	 * @param myInfo
-	 *            the my info
+	 * @param info
+	 *            the info
 	 */
 	@Access(AccessType.PUBLIC)
-	public void seen(final @Name("id") String id, final @Name("info") Info myInfo) {
-
+	public void seen(final @Name("id") String id, final @Name("info") Info info) {
+		
 		// TODO: check if we know url, by contacting the agent and asking.
-		final AsyncCallback<Info> callback = new AsyncCallback<Info>(){
-
+		final AsyncCallback<Info> callback = new AsyncCallback<Info>() {
+			
 			@Override
 			public void onSuccess(Info result) {
 				final ObjectNode params = JOM.createObjectNode();
 				params.put("id", id);
 				params.put("info", JOM.getInstance().valueToTree(result));
 				try {
-					send(new URI(WSCLIENTURL+getId()),"know",params);
+					send(new URI(WSCLIENTURL + getId()), "know", params);
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
 			}
-
+			
 			@Override
 			public void onFailure(Exception exception) {
 				System.err.println("onFailure called:");
@@ -101,8 +107,9 @@ public class ConferenceCloudAgent extends Agent {
 		};
 		try {
 			final ObjectNode params = JOM.createObjectNode();
-			params.put("info",JOM.getInstance().valueToTree(myInfo));
-			send(new URI(BASEURL+id),"getInfo",params,callback);
+			params.put("mine", JOM.getInstance().valueToTree(getMyInfo()));
+			params.put("yours", JOM.getInstance().valueToTree(info));
+			send(new URI(BASEURL + id), "getInfo", params, callback);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
@@ -115,15 +122,46 @@ public class ConferenceCloudAgent extends Agent {
 	 * 
 	 * @param remoteInfo
 	 *            the remote info
+	 * @param newInfo
+	 *            the new info
 	 * @return the info
 	 */
 	@Access(AccessType.PUBLIC)
-	public Info getInfo(final @Name("info") Info remoteInfo) {
+	public Info getInfo(final @Name("mine") Info remoteInfo,
+			final @Name("yours") Info newInfo) {
 		// TODO: Based on app specific info: return relevant information and
 		// boolean "know you".
-		final Info result = new Info();
+		final Info result = getMyInfo();
 		result.setKnown(true);
-		return result;
+		
+		return newInfo.merge(result);
 	}
 	
+	/**
+	 * Gets the my info.
+	 * 
+	 * @return the my info
+	 */
+	public Info getMyInfo() {
+		
+		if (myInfo != null && lastUpdate != null && lastUpdate.plus(300000).isAfterNow()){
+			return myInfo;
+		}
+		final ObjectNode params = JOM.createObjectNode();
+		final SyncCallback<Info> callback = new SyncCallback<Info>() {
+		};
+		try {
+			send(new URI(WSCLIENTURL + getId()), "getMyInfo", params, callback);
+			myInfo = myInfo.merge(callback.get());
+			lastUpdate = DateTime.now();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return myInfo;
+	}
 }

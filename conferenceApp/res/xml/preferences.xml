@@ -10,5 +10,13 @@
             android:persistent="true"
             android:title="@string/wsServer" />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_app"
+        android:title="@string/pref_app_title" >
+        <EditTextPreference
+            android:key="@string/myName_key"
+            android:persistent="true"
+            android:title="@string/myName" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

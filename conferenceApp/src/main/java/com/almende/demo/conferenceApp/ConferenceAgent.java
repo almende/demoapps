@@ -61,23 +61,23 @@ public class ConferenceAgent extends Agent {
 	
 	private void registerAgent(String id, String baseUrl) {
 		try {
-			System.err.println("Registering agent:" + id);
+			System.err.println("Registering agent:" + id + " at:" + baseUrl
+					+ "management");
 			final WebsocketTransportConfig clientConfig = new WebsocketTransportConfig();
 			clientConfig.setServerUrl(baseUrl + "management");
 			clientConfig.setId("management_" + id);
 			
-			final SyncCallback<Boolean> callback = new SyncCallback<Boolean>();
+			final SyncCallback<Boolean> callback = new SyncCallback<Boolean>(){};
 			final ObjectNode params = JOM.createObjectNode();
 			params.put("id", id);
+			WsClientTransport client = null;
 			try {
-				WsClientTransport client = WsClientTransportFactory.get(
+				client = WsClientTransportFactory.get(
 						clientConfig, new SimpleHandler<Receiver>(
 								new Receiver() {
 									@Override
 									public void receive(Object msg,
 											URI senderUrl, String tag) {
-										System.err.println("Received reply:"
-												+ msg);
 										callback.onSuccess(true);
 									}
 								}));
@@ -88,8 +88,12 @@ public class ConferenceAgent extends Agent {
 				e.printStackTrace();
 			}
 			try {
-				// Wait for reply!
-				callback.get();
+				if (client != null && client.isConnected()){
+					// Wait for reply!
+					final boolean res = callback.get();
+					System.err.println("Got reply on callback:"+res);
+					client.disconnect();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -134,15 +138,20 @@ public class ConferenceAgent extends Agent {
 	}
 	
 	public void reconnect() {
+		
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(ctx);
 		final String baseUrl = prefs.getString(
 				ctx.getString(R.string.wsServer_key), BASEURL);
 		
 		registerAgent(getId(), baseUrl);
+		
+		System.err.println("Reconnecting to server:" + baseUrl + getId());
 		final WebsocketTransportConfig clientConfig = new WebsocketTransportConfig();
 		clientConfig.setServerUrl(baseUrl + getId());
+		clientConfig.setId(getId());
 		this.loadTransports(clientConfig, true);
+		
 		cloud = URI.create(baseUrl + getId());
 	}
 	
@@ -177,7 +186,7 @@ public class ConferenceAgent extends Agent {
 				
 				check(id, info);
 			}
-		} else if (event.getValue().equals("settingsUpdated")){
+		} else if (event.getValue().equals("settingsUpdated")) {
 			reconnect();
 		}
 	}
@@ -221,7 +230,7 @@ public class ConferenceAgent extends Agent {
 				}
 			}
 		}
-		Collections.sort(result);
+		Collections.sort(result,Collections.reverseOrder());
 		return result;
 	}
 	
@@ -230,5 +239,18 @@ public class ConferenceAgent extends Agent {
 			return getState().get(CONTACTKEY).get(id);
 		}
 		return null;
+	}
+	
+	public Info getMyInfo() {
+		System.err.println("GetMyInfo called!");
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(ctx);
+		final String myName = prefs.getString(
+				ctx.getString(R.string.myName_key), "person:"+getId());
+		final Info myInfo = new Info(getId());
+		myInfo.setName(myName);
+
+		System.err.println("Returning:"+myInfo);
+		return myInfo;
 	}
 }
