@@ -7,6 +7,7 @@
     <string name="wifiList">No scanresults available</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_cleanup">Clean up agent data</string>
     <string name="eve_service">Eve Service</string>
     <string name="pref_connection_title">Connection</string>
     <string name="pref_app_title">Information</string>
@@ -14,5 +15,16 @@
     <string name="wsServer">Server base-url</string>
     <string name="myName">Name</string>
     <string name="myName_key">myName</string>
+    <string name="phoneNumbers_key">PhoneNumbersKey</string>
+    <string name="phoneNumbers">My phonenumbers (CSV)</string>
+    <string name="knownNames_key">knownNamesKey</string>
+    <string name="knownNames_label">Add a known name, with reason.</string>
+    <string name="addKnownName">Add known name</string>
+    <string name="knownNames">Known names</string>
+    <string name="knownName_key">KnownNameKey</string>
+    <string name="knownName_hint">Name</string>
+    <string name="knownName_title">Add known name:</string>
+    <string name="reason_title">Tell the known person, why you know him/her:</string>
+    <string name="reason_hint">reason</string>
 
 </resources>

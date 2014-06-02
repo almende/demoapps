@@ -7,6 +7,7 @@ package com.almende.demo.conferenceCloud;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 
@@ -129,10 +130,16 @@ public class ConferenceCloudAgent extends Agent {
 	@Access(AccessType.PUBLIC)
 	public Info getInfo(final @Name("mine") Info remoteInfo,
 			final @Name("yours") Info newInfo) {
-		// TODO: Based on app specific info: return relevant information and
-		// boolean "know you".
+
 		final Info result = getMyInfo();
-		result.setKnown(true);
+		final Map<String,String> knownNames = result.getKnownNames();
+		
+		if (knownNames.containsKey(remoteInfo.getName())){
+			result.setKnown(true);
+			result.setWhy(knownNames.get(remoteInfo.getName()));
+		}
+		
+		System.err.println("Got:"+remoteInfo.getName()+" and returning:"+newInfo.merge(result)+" with:"+knownNames);
 		
 		return newInfo.merge(result);
 	}
@@ -163,5 +170,17 @@ public class ConferenceCloudAgent extends Agent {
 		}
 		
 		return myInfo;
+	}
+	
+	/**
+	 * Sets the my info.
+	 * 
+	 * @param myInfo
+	 *            the new my info
+	 */
+	public void setMyInfo(final @Name("info") Info myInfo){
+		System.err.println("Updating myInfo:"+myInfo);
+		this.myInfo = myInfo;
+		this.lastUpdate = DateTime.now();
 	}
 }

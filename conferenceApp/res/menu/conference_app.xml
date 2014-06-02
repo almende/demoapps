@@ -10,5 +10,9 @@
         android:id="@+id/action_refresh"
         android:orderInCategory="101"
         android:title="@string/action_refresh"/>
+    <item
+        android:id="@+id/action_cleanup"
+        android:orderInCategory="102"
+        android:title="@string/action_cleanup"/>
 
 </menu>

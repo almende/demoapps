@@ -16,14 +16,19 @@ public class SettingsActivity extends Activity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// Display the fragment as the main content.
-		getFragmentManager().beginTransaction()
-				.replace(android.R.id.content, new SettingsFragment()).commit();
+		try {
+			// Display the fragment as the main content.
+			getFragmentManager().beginTransaction()
+					.replace(android.R.id.content, new SettingsFragment())
+					.commit();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 	
 	@Override
 	protected void onPause() {
-		EventBus.getDefault().post(new StateEvent(null,"settingsUpdated"));
+		EventBus.getDefault().post(new StateEvent(null, "settingsUpdated"));
 		super.onPause();
 	}
 }

@@ -7,9 +7,13 @@ package com.almende.demo.conferenceApp;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 
@@ -48,6 +52,9 @@ public class ConferenceAgent extends Agent {
 	private static final TypedKey<HashMap<String, Info>>	CONTACTKEY	= new TypedKey<HashMap<String, Info>>(
 																				"contacts") {
 																		};
+	private static final TypedKey<HashMap<String, String>>	KNOWNNAMES	= new TypedKey<HashMap<String, String>>(
+																				"knownNames") {
+																		};
 	
 	private static Context									ctx			= null;
 	
@@ -67,20 +74,20 @@ public class ConferenceAgent extends Agent {
 			clientConfig.setServerUrl(baseUrl + "management");
 			clientConfig.setId("management_" + id);
 			
-			final SyncCallback<Boolean> callback = new SyncCallback<Boolean>(){};
+			final SyncCallback<Boolean> callback = new SyncCallback<Boolean>() {
+			};
 			final ObjectNode params = JOM.createObjectNode();
 			params.put("id", id);
 			WsClientTransport client = null;
 			try {
-				client = WsClientTransportFactory.get(
-						clientConfig, new SimpleHandler<Receiver>(
-								new Receiver() {
-									@Override
-									public void receive(Object msg,
-											URI senderUrl, String tag) {
-										callback.onSuccess(true);
-									}
-								}));
+				client = WsClientTransportFactory.get(clientConfig,
+						new SimpleHandler<Receiver>(new Receiver() {
+							@Override
+							public void receive(Object msg, URI senderUrl,
+									String tag) {
+								callback.onSuccess(true);
+							}
+						}));
 				client.connect();
 				client.send(RpcTransformFactory.get(null)
 						.buildMsg("registerAgent", params, null).toString());
@@ -88,10 +95,10 @@ public class ConferenceAgent extends Agent {
 				e.printStackTrace();
 			}
 			try {
-				if (client != null && client.isConnected()){
+				if (client != null && client.isConnected()) {
 					// Wait for reply!
 					final boolean res = callback.get();
-					System.err.println("Got reply on callback:"+res);
+					System.err.println("Got reply on callback:" + res);
 					client.disconnect();
 				}
 			} catch (Exception e) {
@@ -173,6 +180,9 @@ public class ConferenceAgent extends Agent {
 			String id = event.getId();
 			
 			if (getState() != null) {
+				if (!getState().containsKey(CONTACTKEY.getKey())) {
+					getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
+				}
 				HashMap<String, Info> contacts = getState().get(CONTACTKEY);
 				Info info = contacts.get(id);
 				if (info == null) {
@@ -188,6 +198,7 @@ public class ConferenceAgent extends Agent {
 			}
 		} else if (event.getValue().equals("settingsUpdated")) {
 			reconnect();
+			sendMyInfo();
 		}
 	}
 	
@@ -206,9 +217,29 @@ public class ConferenceAgent extends Agent {
 		}
 	}
 	
+	/**
+	 * Send my info.
+	 */
+	private void sendMyInfo() {
+		if (cloud != null) {
+			final ObjectNode params = JOM.createObjectNode();
+			params.put("info", JOM.getInstance().valueToTree(getMyInfo()));
+			try {
+				send(cloud, "setMyInfo", params);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.err.println("Not connected?!?");
+		}
+	}
+	
 	@Access(AccessType.PUBLIC)
 	public void know(final @Name("id") String id, @Name("info") Info info) {
-		// TODO: use putIfUnchanged instead.
+		if (!getState().containsKey(CONTACTKEY.getKey())) {
+			getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
+		}
+
 		HashMap<String, Info> contacts = getState().get(CONTACTKEY);
 		Info oldinfo = contacts.get(id);
 		if (oldinfo != null) {
@@ -230,7 +261,7 @@ public class ConferenceAgent extends Agent {
 				}
 			}
 		}
-		Collections.sort(result,Collections.reverseOrder());
+		Collections.sort(result, Collections.reverseOrder());
 		return result;
 	}
 	
@@ -242,15 +273,55 @@ public class ConferenceAgent extends Agent {
 	}
 	
 	public Info getMyInfo() {
-		System.err.println("GetMyInfo called!");
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(ctx);
 		final String myName = prefs.getString(
-				ctx.getString(R.string.myName_key), "person:"+getId());
+				ctx.getString(R.string.myName_key), "person:" + getId());
 		final Info myInfo = new Info(getId());
 		myInfo.setName(myName);
-
-		System.err.println("Returning:"+myInfo);
+		myInfo.setKnownNames(getKnownNames());
+		
+		final String phoneNumberPref = prefs.getString(
+				ctx.getString(R.string.phoneNumbers_key), "");
+		final Set<String> phoneNumberSet = new HashSet<String>();
+		final String[] phoneNumbers = phoneNumberPref.split(",");
+		phoneNumberSet.addAll(Arrays.asList(phoneNumbers));
+		myInfo.setPhonenumbers(phoneNumberSet);
+		
 		return myInfo;
+	}
+	
+	public HashMap<String, String> getKnownNames() {
+		if (getState() != null && getState().containsKey(KNOWNNAMES.getKey())) {
+			return getState().get(KNOWNNAMES);
+		}
+		return new HashMap<String, String>();
+	}
+	
+	public void addKnownName(String name, String reason) {
+		if (name != null) {
+			Map<String, String> names = new HashMap<String, String>();
+			if (getState() != null
+					&& getState().containsKey(KNOWNNAMES.getKey())) {
+				names = getState().get(KNOWNNAMES);
+			}
+			names.put(name, reason);
+			if (getState() != null) {
+				getState().put(KNOWNNAMES.getKey(), names);
+				EventBus.getDefault().post(
+						new StateEvent(null, "addedKnownName"));
+			}
+		}
+	}
+	
+	public void cleanUp() {
+		if (getState() != null) {
+			getState().clear();
+			if (!getState().containsKey(CONTACTKEY.getKey())) {
+				getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
+			}
+			EventBus.getDefault().post(new StateEvent(getId(), "listUpdated"));
+			EventBus.getDefault().post(new StateEvent(null, "addedKnownName"));
+		}
 	}
 }

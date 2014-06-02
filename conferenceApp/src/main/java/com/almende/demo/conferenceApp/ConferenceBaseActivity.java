@@ -101,6 +101,9 @@ public class ConferenceBaseActivity extends Activity {
 			case R.id.action_refresh:
 				refresh();
 				return true;
+			case R.id.action_cleanup:
+				EveService.myAgent.cleanUp();
+				return true;
 			case android.R.id.home:
 				getFragmentManager().popBackStack();
 				return true;

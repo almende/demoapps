@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/knownName_key"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/knownName_title" />
+
+    <EditText
+        android:id="@+id/knownName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/knownName_hint" />
+
+    <TextView
+        android:id="@+id/reason_key"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reason_title" />
+
+    <EditText
+        android:id="@+id/reason"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/reason_hint" />
+
+</LinearLayout>

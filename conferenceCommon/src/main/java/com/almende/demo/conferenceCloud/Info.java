@@ -5,7 +5,9 @@
 package com.almende.demo.conferenceCloud;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -22,6 +24,7 @@ public class Info implements Serializable, Comparable<Info> {
 	private boolean				known				= false;
 	private boolean				ignored				= false;
 	
+	private Map<String, String>	knownNames			= new HashMap<String, String>();
 	private Set<String>			phonenumbers		= new HashSet<String>();
 	private Set<String>			emailAddresses		= new HashSet<String>();
 	
@@ -56,6 +59,7 @@ public class Info implements Serializable, Comparable<Info> {
 		if (other.lastSeen.isAfter(lastSeen)) {
 			lastSeen = other.lastSeen;
 		}
+		knownNames.putAll(other.knownNames);
 		phonenumbers.addAll(other.phonenumbers);
 		emailAddresses.addAll(other.emailAddresses);
 		if (other.ignored) {
@@ -63,6 +67,9 @@ public class Info implements Serializable, Comparable<Info> {
 		}
 		if (other.known) {
 			known = true;
+		}
+		if (other.why != null){
+			why=other.why;
 		}
 		this.name = other.name;
 		return this;
@@ -118,6 +125,25 @@ public class Info implements Serializable, Comparable<Info> {
 	}
 	
 	/**
+	 * Gets the known names.
+	 * 
+	 * @return the known names
+	 */
+	public Map<String, String> getKnownNames() {
+		return knownNames;
+	}
+
+	/**
+	 * Sets the known names.
+	 * 
+	 * @param knownNames
+	 *            the known names
+	 */
+	public void setKnownNames(Map<String, String> knownNames) {
+		this.knownNames = knownNames;
+	}
+
+	/**
 	 * @return the phonenumbers
 	 */
 	public Set<String> getPhonenumbers() {
@@ -170,7 +196,7 @@ public class Info implements Serializable, Comparable<Info> {
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return name != null ? name : "<unknown>";
 	}
 	
 	/**
@@ -185,7 +211,7 @@ public class Info implements Serializable, Comparable<Info> {
 	 * @return the why
 	 */
 	public String getWhy() {
-		return why;
+		return why != null ? why : "---";
 	}
 	
 	/**
@@ -198,8 +224,8 @@ public class Info implements Serializable, Comparable<Info> {
 	
 	@Override
 	public String toString() {
-		DateTimeFormatter outputFormatter = 
-	             DateTimeFormat.forPattern("HH:mm").withZone(DateTimeZone.getDefault());
+		DateTimeFormatter outputFormatter = DateTimeFormat.forPattern("HH:mm")
+				.withZone(DateTimeZone.getDefault());
 		return getName() + (getWhy() != null ? " - " + getWhy() : "") + "("
 				+ outputFormatter.print(lastSeen) + ")";
 	}

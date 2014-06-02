@@ -17,6 +17,22 @@
             android:key="@string/myName_key"
             android:persistent="true"
             android:title="@string/myName" />
+        <EditTextPreference
+            android:key="@string/phoneNumbers_key"
+            android:persistent="true"
+            android:title="@string/phoneNumbers" />
+
+        <com.almende.demo.conferenceApp.KnownNamesDialog
+            android:dialogMessage="@string/knownNames_label"
+            android:key="@string/knownNames_key"
+            android:negativeButtonText="Cancel"
+            android:persistent="true"
+            android:positiveButtonText="Add"
+            android:title="@string/addKnownName" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_knownNames"
+        android:title="@string/knownNames" >
     </PreferenceCategory>
 
 </PreferenceScreen>
