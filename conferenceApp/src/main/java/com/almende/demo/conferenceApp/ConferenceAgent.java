@@ -279,13 +279,19 @@ public class ConferenceAgent extends Agent {
 				ctx.getString(R.string.myName_key), "person:" + getId());
 		final Info myInfo = new Info(getId());
 		myInfo.setName(myName);
+		
+		final String paperTitle = prefs.getString(
+				ctx.getString(R.string.paperTitle_key), "---");
+		myInfo.setTitle(paperTitle);
 		myInfo.setKnownNames(getKnownNames());
 		
 		final String phoneNumberPref = prefs.getString(
 				ctx.getString(R.string.phoneNumbers_key), "");
 		final Set<String> phoneNumberSet = new HashSet<String>();
 		final String[] phoneNumbers = phoneNumberPref.split(",");
+		
 		phoneNumberSet.addAll(Arrays.asList(phoneNumbers));
+		phoneNumberSet.remove(null);
 		myInfo.setPhonenumbers(phoneNumberSet);
 		
 		return myInfo;

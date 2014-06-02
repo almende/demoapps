@@ -18,6 +18,10 @@
             android:persistent="true"
             android:title="@string/myName" />
         <EditTextPreference
+            android:key="@string/paperTitle_key"
+            android:persistent="true"
+            android:title="@string/paperTitle" />
+        <EditTextPreference
             android:key="@string/phoneNumbers_key"
             android:persistent="true"
             android:title="@string/phoneNumbers" />

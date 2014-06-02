@@ -11,9 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * The Class Info.
@@ -31,6 +28,7 @@ public class Info implements Serializable, Comparable<Info> {
 	private String				id					= null;
 	private String				name				= null;
 	private String				why					= null;
+	private String				title				= null;
 	
 	/**
 	 * Instantiates a new info.
@@ -68,8 +66,11 @@ public class Info implements Serializable, Comparable<Info> {
 		if (other.known) {
 			known = true;
 		}
-		if (other.why != null){
-			why=other.why;
+		if (other.why != null) {
+			why = other.why;
+		}
+		if (other.title != null) {
+			title = other.title;
 		}
 		this.name = other.name;
 		return this;
@@ -132,7 +133,7 @@ public class Info implements Serializable, Comparable<Info> {
 	public Map<String, String> getKnownNames() {
 		return knownNames;
 	}
-
+	
 	/**
 	 * Sets the known names.
 	 * 
@@ -142,12 +143,18 @@ public class Info implements Serializable, Comparable<Info> {
 	public void setKnownNames(Map<String, String> knownNames) {
 		this.knownNames = knownNames;
 	}
-
+	
 	/**
 	 * @return the phonenumbers
 	 */
 	public Set<String> getPhonenumbers() {
-		return phonenumbers;
+		Set<String> result = new HashSet<String>();
+		for (String number : phonenumbers) {
+			if (!number.trim().isEmpty()) {
+				result.add(number);
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -171,6 +178,25 @@ public class Info implements Serializable, Comparable<Info> {
 	 */
 	public void setEmailAddresses(Set<String> emailAddresses) {
 		this.emailAddresses = emailAddresses;
+	}
+	
+	/**
+	 * Gets the title.
+	 * 
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
+	
+	/**
+	 * Sets the title.
+	 * 
+	 * @param title
+	 *            the new title
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	/**
@@ -224,10 +250,7 @@ public class Info implements Serializable, Comparable<Info> {
 	
 	@Override
 	public String toString() {
-		DateTimeFormatter outputFormatter = DateTimeFormat.forPattern("HH:mm")
-				.withZone(DateTimeZone.getDefault());
-		return getName() + (getWhy() != null ? " - " + getWhy() : "") + "("
-				+ outputFormatter.print(lastSeen) + ")";
+		return getName() + (getWhy() != null ? " - " + getWhy() : "");
 	}
 	
 	@Override

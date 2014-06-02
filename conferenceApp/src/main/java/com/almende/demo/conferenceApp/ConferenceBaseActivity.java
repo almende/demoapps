@@ -6,6 +6,10 @@ package com.almende.demo.conferenceApp;
 
 import java.util.List;
 
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -223,8 +227,19 @@ public class ConferenceBaseActivity extends Activity {
 		private void refresh() {
 			info = EveService.myAgent.get(id);
 			if (info != null) {
-				TextView details = (TextView) view.findViewById(R.id.details);
-				details.setText(info.getLastSeen().toString());
+				final TextView name = (TextView) view.findViewById(R.id.details_name);
+				name.setText(info.getName());
+				final TextView reason = (TextView) view.findViewById(R.id.details_reason);
+				reason.setText(info.getWhy());
+				final DateTimeFormatter outputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm")
+						.withZone(DateTimeZone.getDefault());
+				final TextView lastSeen = (TextView) view.findViewById(R.id.details_lastseen);
+				lastSeen.setText(outputFormatter.print(info.getLastSeen()));
+				
+				final PhoneNumberAdapter adapter = new PhoneNumberAdapter(ctx,
+						R.layout.phonenumber_conference_app, info.getPhonenumbers().toArray(new String[0]));
+				final ListView phonenumbers = (ListView) view.findViewById(R.id.details_phonenumbers);
+				phonenumbers.setAdapter(adapter);
 			}
 		}
 		
