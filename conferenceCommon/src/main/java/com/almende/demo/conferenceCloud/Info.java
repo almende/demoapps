@@ -66,10 +66,10 @@ public class Info implements Serializable, Comparable<Info> {
 		if (other.known) {
 			known = true;
 		}
-		if (other.why != null) {
+		if (other.why != null && !other.why.equals("---")) {
 			why = other.why;
 		}
-		if (other.title != null) {
+		if (other.title != null && !other.title.equals("---")) {
 			title = other.title;
 		}
 		this.name = other.name;

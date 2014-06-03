@@ -59,7 +59,7 @@ public class EveService extends Service {
 		// Build notification
 		final Notification noti = new Notification.Builder(this)
 				.setContentTitle("Conference App running!")
-				.setSmallIcon(R.drawable.teamwork).setContentIntent(pIntent)
+				.setSmallIcon(R.drawable.paams).setContentIntent(pIntent)
 				.build();
 		
 		noti.flags |= Notification.FLAG_FOREGROUND_SERVICE;
@@ -78,9 +78,9 @@ public class EveService extends Service {
 		myHandler.post(new Runnable() {
 			@Override
 			public void run() {
+				myAgent.init(ctx);
 				setupBaseNotification();
 				servicesConnected();
-				myAgent.init(ctx);
 			}
 		});
 	}

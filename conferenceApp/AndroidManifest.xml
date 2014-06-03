@@ -28,7 +28,7 @@
         android:name=".ConferenceApp"
         android:allowBackup="true"
         android:configChanges="keyboard|keyboardHidden|orientation"
-        android:icon="@drawable/teamwork"
+        android:icon="@drawable/paams"
         android:label="@string/app_name"
         android:screenOrientation="portrait"
         android:theme="@android:style/Theme.Holo.Light" >

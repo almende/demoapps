@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -21,8 +22,7 @@
         android:id="@+id/details_lastseen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/details_name"
-        android:layout_below="@+id/details_name"
+        android:layout_gravity="top"
         android:paddingTop="10dp"
         android:text="@string/details_lastseen" />
 
@@ -30,19 +30,14 @@
         android:id="@+id/details_reason_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/details_lastseen"
-        android:layout_below="@+id/details_lastseen"
-        android:paddingTop="5dp"
+        android:layout_gravity="top"
         android:text="@string/details_reason_title" />
 
     <TextView
         android:id="@+id/details_reason"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/details_reason_title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/details_reason_title"
+        android:layout_gravity="top"
         android:text="@string/details_reason"
         android:textStyle="bold|italic" />
 
@@ -50,18 +45,14 @@
         android:id="@+id/details_paper_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/details_reason_title"
-        android:layout_below="@+id/details_reason_title"
-        android:paddingTop="5dp"
+        android:layout_gravity="top"
         android:text="@string/details_paper_title" />
 
     <TextView
         android:id="@+id/details_paper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/details_paper_title"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/details_paper_title"
+        android:layout_gravity="top"
         android:text="@string/details_paper"
         android:textStyle="bold|italic" />
 
@@ -69,9 +60,7 @@
         android:id="@+id/details_phonenumbers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/details_paper_title"
-        android:layout_below="@+id/details_paper_title"
         android:paddingTop="5dp" >
     </ListView>
 
-</RelativeLayout>
+</LinearLayout>

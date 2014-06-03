@@ -252,7 +252,7 @@ public class ConferenceAgent extends Agent {
 	
 	public List<Info> getList(final boolean filterIgnored) {
 		List<Info> result = new ArrayList<Info>();
-		if (getState() != null && getState().containsKey("contacts")) {
+		if (getState() != null && getState().containsKey(CONTACTKEY.getKey())) {
 			HashMap<String, Info> contacts = getState().get(CONTACTKEY);
 			
 			for (Info info : contacts.values()) {
@@ -277,6 +277,7 @@ public class ConferenceAgent extends Agent {
 				.getDefaultSharedPreferences(ctx);
 		final String myName = prefs.getString(
 				ctx.getString(R.string.myName_key), "person:" + getId());
+		
 		final Info myInfo = new Info(getId());
 		myInfo.setName(myName);
 		
@@ -294,6 +295,7 @@ public class ConferenceAgent extends Agent {
 		phoneNumberSet.remove(null);
 		myInfo.setPhonenumbers(phoneNumberSet);
 		
+		System.err.println("Sending myInfo:"+JOM.getInstance().valueToTree(myInfo));
 		return myInfo;
 	}
 	
@@ -320,14 +322,16 @@ public class ConferenceAgent extends Agent {
 		}
 	}
 	
-	public void cleanUp() {
+	public void cleanKnownNames(){
 		if (getState() != null) {
-			getState().clear();
-			if (!getState().containsKey(CONTACTKEY.getKey())) {
-				getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
-			}
-			EventBus.getDefault().post(new StateEvent(getId(), "listUpdated"));
+			getState().put(KNOWNNAMES.getKey(), new HashMap<String, String>());
 			EventBus.getDefault().post(new StateEvent(null, "addedKnownName"));
+		}
+	}
+	public void cleanContacts(){
+		if (getState() != null) {
+			getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
+			EventBus.getDefault().post(new StateEvent(getId(), "listUpdated"));
 		}
 	}
 }

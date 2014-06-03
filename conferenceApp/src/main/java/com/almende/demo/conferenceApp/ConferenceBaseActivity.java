@@ -105,8 +105,11 @@ public class ConferenceBaseActivity extends Activity {
 			case R.id.action_refresh:
 				refresh();
 				return true;
-			case R.id.action_cleanup:
-				EveService.myAgent.cleanUp();
+			case R.id.action_cleanup_contacts:
+				EveService.myAgent.cleanContacts();
+				return true;
+			case R.id.action_cleanup_knownnames:
+				EveService.myAgent.cleanKnownNames();
 				return true;
 			case android.R.id.home:
 				getFragmentManager().popBackStack();
@@ -231,6 +234,8 @@ public class ConferenceBaseActivity extends Activity {
 				name.setText(info.getName());
 				final TextView reason = (TextView) view.findViewById(R.id.details_reason);
 				reason.setText(info.getWhy());
+				final TextView title = (TextView) view.findViewById(R.id.details_paper);
+				title.setText(info.getTitle());
 				final DateTimeFormatter outputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm")
 						.withZone(DateTimeZone.getDefault());
 				final TextView lastSeen = (TextView) view.findViewById(R.id.details_lastseen);

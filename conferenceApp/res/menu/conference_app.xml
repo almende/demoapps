@@ -11,8 +11,12 @@
         android:orderInCategory="101"
         android:title="@string/action_refresh"/>
     <item
-        android:id="@+id/action_cleanup"
+        android:id="@+id/action_cleanup_knownnames"
         android:orderInCategory="102"
-        android:title="@string/action_cleanup"/>
+        android:title="@string/action_cleanup_knownnames"/>
+    <item
+        android:id="@+id/action_cleanup_contacts"
+        android:orderInCategory="103"
+        android:title="@string/action_cleanup_contacts"/>
 
 </menu>

@@ -130,8 +130,10 @@ public class ConferenceCloudAgent extends Agent {
 	@Access(AccessType.PUBLIC)
 	public Info getInfo(final @Name("mine") Info remoteInfo,
 			final @Name("yours") Info newInfo) {
-
-		final Info result = getMyInfo();
+		
+		final Info result = new Info();
+		result.merge(getMyInfo());
+		
 		final Map<String,String> knownNames = result.getKnownNames();
 		
 		if (knownNames.containsKey(remoteInfo.getName())){
@@ -139,7 +141,7 @@ public class ConferenceCloudAgent extends Agent {
 			result.setWhy(knownNames.get(remoteInfo.getName()));
 		}
 		
-		System.err.println("Got:"+remoteInfo.getName()+" and returning:"+newInfo.merge(result)+" with:"+knownNames);
+		System.err.println("Got:"+remoteInfo.getName()+" and returning:"+JOM.getInstance().valueToTree(newInfo.merge(result))+" with:"+knownNames);
 		
 		return newInfo.merge(result);
 	}

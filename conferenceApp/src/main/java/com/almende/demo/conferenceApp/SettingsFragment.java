@@ -28,7 +28,7 @@ public class SettingsFragment extends PreferenceFragment {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		PreferenceManager.setDefaultValues(getActivity(), R.xml.preferences,
+		PreferenceManager.setDefaultValues(getActivity().getApplication(), R.xml.preferences,
 				false);
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.preferences);
