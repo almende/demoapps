@@ -29,14 +29,14 @@ import com.almende.eve.capabilities.handler.SimpleHandler;
 import com.almende.eve.scheduling.SimpleSchedulerConfig;
 import com.almende.eve.state.TypedKey;
 import com.almende.eve.state.file.FileStateConfig;
-import com.almende.eve.transform.rpc.RpcTransformFactory;
+import com.almende.eve.transform.rpc.RpcTransformBuilder;
 import com.almende.eve.transform.rpc.annotation.Access;
 import com.almende.eve.transform.rpc.annotation.AccessType;
 import com.almende.eve.transform.rpc.annotation.Name;
 import com.almende.eve.transport.Receiver;
 import com.almende.eve.transport.ws.WebsocketTransportConfig;
 import com.almende.eve.transport.ws.WsClientTransport;
-import com.almende.eve.transport.ws.WsClientTransportFactory;
+import com.almende.eve.transport.ws.WsClientTransportBuilder;
 import com.almende.util.callback.SyncCallback;
 import com.almende.util.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -80,16 +80,17 @@ public class ConferenceAgent extends Agent {
 			params.put("id", id);
 			WsClientTransport client = null;
 			try {
-				client = WsClientTransportFactory.get(clientConfig,
-						new SimpleHandler<Receiver>(new Receiver() {
+				client = new WsClientTransportBuilder()
+						.withConfig(clientConfig)
+						.withHandle(new SimpleHandler<Receiver>(new Receiver() {
 							@Override
 							public void receive(Object msg, URI senderUrl,
 									String tag) {
 								callback.onSuccess(true);
 							}
-						}));
+						})).build();
 				client.connect();
-				client.send(RpcTransformFactory.get(null)
+				client.send(new RpcTransformBuilder().build()
 						.buildMsg("registerAgent", params, null).toString());
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -181,7 +182,8 @@ public class ConferenceAgent extends Agent {
 			
 			if (getState() != null) {
 				if (!getState().containsKey(CONTACTKEY.getKey())) {
-					getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
+					getState().put(CONTACTKEY.getKey(),
+							new HashMap<String, Info>());
 				}
 				HashMap<String, Info> contacts = getState().get(CONTACTKEY);
 				Info info = contacts.get(id);
@@ -239,7 +241,7 @@ public class ConferenceAgent extends Agent {
 		if (!getState().containsKey(CONTACTKEY.getKey())) {
 			getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
 		}
-
+		
 		HashMap<String, Info> contacts = getState().get(CONTACTKEY);
 		Info oldinfo = contacts.get(id);
 		if (oldinfo != null) {
@@ -295,7 +297,8 @@ public class ConferenceAgent extends Agent {
 		phoneNumberSet.remove(null);
 		myInfo.setPhonenumbers(phoneNumberSet);
 		
-		System.err.println("Sending myInfo:"+JOM.getInstance().valueToTree(myInfo));
+		System.err.println("Sending myInfo:"
+				+ JOM.getInstance().valueToTree(myInfo));
 		return myInfo;
 	}
 	
@@ -322,13 +325,14 @@ public class ConferenceAgent extends Agent {
 		}
 	}
 	
-	public void cleanKnownNames(){
+	public void cleanKnownNames() {
 		if (getState() != null) {
 			getState().put(KNOWNNAMES.getKey(), new HashMap<String, String>());
 			EventBus.getDefault().post(new StateEvent(null, "addedKnownName"));
 		}
 	}
-	public void cleanContacts(){
+	
+	public void cleanContacts() {
 		if (getState() != null) {
 			getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
 			EventBus.getDefault().post(new StateEvent(getId(), "listUpdated"));
