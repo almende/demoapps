@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.almende.demo</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.5-SNAPSHOT</version>
+		<version>0.0.6-SNAPSHOT</version>
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>conferenceApp</artifactId>
@@ -12,7 +12,7 @@
 
 	<properties>
 		<android.target>19</android.target>
-		<android-maven-plugin.version>3.8.2</android-maven-plugin.version>
+		<android-maven-plugin.version>3.9.0-rc.3</android-maven-plugin.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 	</properties>
 
@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>com.almende.eve</groupId>
 			<artifactId>eve-bundle-android-ws</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>${eve.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.greenrobot</groupId>
@@ -49,13 +49,13 @@
 		<dependency>
 			<groupId>com.google.android.gms</groupId>
 			<artifactId>google-play-services</artifactId>
-			<version>15</version>
+			<version>19.0.0</version>
 			<type>apklib</type>
 		</dependency>
 		<dependency>
 			<groupId>com.google.android.gms</groupId>
 			<artifactId>google-play-services</artifactId>
-			<version>15</version>
+			<version>19.0.0</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>

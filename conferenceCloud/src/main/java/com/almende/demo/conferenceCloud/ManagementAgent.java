@@ -37,7 +37,7 @@ public class ManagementAgent extends Agent {
 		serverConfig.setServletLauncher("JettyLauncher");
 		final ObjectNode jettyParms = JOM.createObjectNode();
 		jettyParms.put("port", 8082);
-		serverConfig.put("jetty", jettyParms);
+		serverConfig.set("jetty", jettyParms);
 		
 		config.setTransport(serverConfig);
 		

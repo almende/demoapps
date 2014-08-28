@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.almende.demo</groupId>
 	<artifactId>parent</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -14,10 +14,10 @@
 		<maven-eclipse-plugin.version>2.9</maven-eclipse-plugin.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<maven-resources-plugin.version>2.5</maven-resources-plugin.version>
-		<maven-surefire-plugin.version>2.12</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
 		<maven-source-plugin.version>2.1.2</maven-source-plugin.version>
 		<junit.version>4.11</junit.version>
-		<eve.version>3.0.0-SNAPSHOT</eve.version>
+		<eve.version>3.1.0-SNAPSHOT</eve.version>
 	</properties>
 
 	<modules>
@@ -47,6 +47,41 @@
 							<pluginExecutions>
 								<!-- or install the buildhelper in Eclipse :: Window :: Preferences 
 									:: Maven :: Discovery :: Open Catalog -->
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId></groupId>
+										<artifactId></artifactId>
+										<versionRange>[0.0.0,)</versionRange>
+										<goals>
+											<goal></goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.jayway.maven.plugins.android.generation2
+										</groupId>
+										<artifactId>
+											android-maven-plugin
+										</artifactId>
+										<versionRange>
+											[3.9.0-rc.3,)
+										</versionRange>
+										<goals>
+											<goal>proguard</goal>
+											<goal>
+												generate-sources
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -70,8 +105,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<encoding>UTF-8</encoding>
 					<compilerArguments>
 						<verbose />

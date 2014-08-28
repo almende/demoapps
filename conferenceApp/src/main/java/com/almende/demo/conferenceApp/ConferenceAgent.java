@@ -208,9 +208,9 @@ public class ConferenceAgent extends Agent {
 		if (cloud != null) {
 			final ObjectNode params = JOM.createObjectNode();
 			params.put("id", id);
-			params.put("info", JOM.getInstance().valueToTree(info));
+			params.set("info", JOM.getInstance().valueToTree(info));
 			try {
-				send(cloud, "seen", params);
+				caller.call(cloud, "seen", params);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -225,9 +225,9 @@ public class ConferenceAgent extends Agent {
 	private void sendMyInfo() {
 		if (cloud != null) {
 			final ObjectNode params = JOM.createObjectNode();
-			params.put("info", JOM.getInstance().valueToTree(getMyInfo()));
+			params.set("info", JOM.getInstance().valueToTree(getMyInfo()));
 			try {
-				send(cloud, "setMyInfo", params);
+				caller.call(cloud, "setMyInfo", params);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

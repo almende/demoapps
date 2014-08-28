@@ -54,7 +54,7 @@ public class ConferenceCloudAgent extends Agent {
 		serverConfig.setServletLauncher("JettyLauncher");
 		final ObjectNode jettyParms = JOM.createObjectNode();
 		jettyParms.put("port", 8082);
-		serverConfig.put("jetty", jettyParms);
+		serverConfig.set("jetty", jettyParms);
 		transports.add(serverConfig);
 		
 		final HttpTransportConfig httpConfig = new HttpTransportConfig();
@@ -63,7 +63,7 @@ public class ConferenceCloudAgent extends Agent {
 		httpConfig.setDoAuthentication(false);
 		
 		httpConfig.setServletLauncher("JettyLauncher");
-		httpConfig.put("jetty", jettyParms);
+		httpConfig.set("jetty", jettyParms);
 		transports.add(httpConfig);
 		
 		config.setTransport(transports);
@@ -90,9 +90,9 @@ public class ConferenceCloudAgent extends Agent {
 			public void onSuccess(Info result) {
 				final ObjectNode params = JOM.createObjectNode();
 				params.put("id", id);
-				params.put("info", JOM.getInstance().valueToTree(result));
+				params.set("info", JOM.getInstance().valueToTree(result));
 				try {
-					send(new URI(WSCLIENTURL + getId()), "know", params);
+					caller.call(new URI(WSCLIENTURL + getId()), "know", params);
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (URISyntaxException e) {
@@ -108,9 +108,9 @@ public class ConferenceCloudAgent extends Agent {
 		};
 		try {
 			final ObjectNode params = JOM.createObjectNode();
-			params.put("mine", JOM.getInstance().valueToTree(getMyInfo()));
-			params.put("yours", JOM.getInstance().valueToTree(info));
-			send(new URI(BASEURL + id), "getInfo", params, callback);
+			params.set("mine", JOM.getInstance().valueToTree(getMyInfo()));
+			params.set("yours", JOM.getInstance().valueToTree(info));
+			caller.call(new URI(BASEURL + id), "getInfo", params, callback);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
@@ -160,7 +160,7 @@ public class ConferenceCloudAgent extends Agent {
 		final SyncCallback<Info> callback = new SyncCallback<Info>() {
 		};
 		try {
-			send(new URI(WSCLIENTURL + getId()), "getMyInfo", params, callback);
+			caller.call(new URI(WSCLIENTURL + getId()), "getMyInfo", params, callback);
 			myInfo = myInfo.merge(callback.get());
 			lastUpdate = DateTime.now();
 		} catch (IOException e) {
