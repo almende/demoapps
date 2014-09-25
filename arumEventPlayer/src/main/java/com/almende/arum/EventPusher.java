@@ -2,7 +2,7 @@
  * Copyright: Almende B.V. (2014), Rotterdam, The Netherlands
  * License: The Apache Software License, Version 2.0
  */
-package eventPlayer;
+package com.almende.arum;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -80,12 +80,12 @@ public class EventPusher extends Agent {
 			LOG.warning("Couldn't determine ipaddress, defaulting to 10.10.1.105");
 			host = "10.10.1.105:8082";
 		}
-		final String id = "conductor";
+		final String id = "events";
 		final AgentConfig config = new AgentConfig(id);
 
 		final ArrayNode transports = JOM.createArrayNode();
 		final WebsocketTransportConfig serverConfig = new WebsocketTransportConfig();
-		serverConfig.setId("conductor");
+		serverConfig.setId(id);
 		serverConfig.setServer(true);
 		serverConfig.setAddress("ws://" + host + "/ws/" + id);
 		serverConfig.setServletLauncher("JettyLauncher");
@@ -95,7 +95,7 @@ public class EventPusher extends Agent {
 		transports.add(serverConfig);
 
 		final HttpTransportConfig debugConfig = new HttpTransportConfig();
-		debugConfig.setId("conductor");
+		debugConfig.setId(id);
 		debugConfig.setDoAuthentication(false);
 		debugConfig.setServletUrl("http://" + host + "/www/");
 		debugConfig

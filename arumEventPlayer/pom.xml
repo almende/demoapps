@@ -43,6 +43,8 @@
 		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
 		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
 		<eve.version>3.1.0-SNAPSHOT</eve.version>
+		<maven.shade.version>2.2</maven.shade.version>
+		<maven.jar.version>2.4</maven.jar.version>
 		<junit.version>4.11</junit.version>
 		<java.version>1.7</java.version>
 		<jackson.version>2.4.1</jackson.version>
@@ -73,6 +75,11 @@
 		<dependency>
 			<groupId>com.almende.eve</groupId>
 			<artifactId>eve-transport-ws</artifactId>
+			<version>${eve.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.almende.eve</groupId>
+			<artifactId>eve-bundle-full-embed</artifactId>
 			<version>${eve.version}</version>
 		</dependency>
 	</dependencies>
@@ -144,8 +151,36 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.version}</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.almende.arum.EventPusher</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>${maven.shade.version}</version>
+				<configuration>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
 	</build>
 
 </project>
