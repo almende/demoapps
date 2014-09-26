@@ -221,7 +221,6 @@ public class EventPusher extends Agent {
 		events.clear();
 
 		String line = reader.readLine();
-		LOG.warning("Reading line:" + line);
 		while (line != null) {
 
 			if (line.isEmpty()) {
