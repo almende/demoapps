@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 
@@ -36,10 +37,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * The Class EventPusher.
  */
 public class EventPusher extends Agent {
-	private static final Logger			LOG				= Logger.getLogger(EventPusher.class
-																.getName());
-	private static final EventPusher	SINGLETON		= new EventPusher();
-	private static final URI			agentGenerator	= URI.create("wsclient:agentGenerator");
+	private static final Logger					LOG				= Logger.getLogger(EventPusher.class
+																		.getName());
+	private static final EventPusher			SINGLETON		= new EventPusher();
+	private static final URI					agentGenerator	= URI.create("wsclient:agentGenerator");
+	private static final ArrayList<ObjectNode>	events			= new ArrayList<ObjectNode>();
 
 	/**
 	 * Send events.
@@ -161,23 +163,48 @@ public class EventPusher extends Agent {
 	}
 
 	/**
+	 * Gets the event count.
+	 *
+	 * @return the event count
+	 */
+	@Access(AccessType.PUBLIC)
+	public Integer getEventCount() {
+		return events.size();
+	}
+
+	/**
+	 * Next event.
+	 */
+	@Access(AccessType.PUBLIC)
+	public void nextEvent() {
+		if (events.size() > 0) {
+			ObjectNode event = events.remove(0);
+			try {
+				sendEvent(event);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * Load events.
 	 *
 	 * @param filename
 	 *            the filename
-	 * @param actuallySend
-	 *            the actually send
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Access(AccessType.PUBLIC)
-	public void loadEvents(@Name("filename") String filename, @Optional @Name("actuallySend") Boolean actuallySend)
+	public void loadEvents(@Name("filename") String filename)
 			throws IOException {
 		final BufferedReader reader = new BufferedReader(new FileReader(
 				filename));
 		final DateTimeFormatter formatter = DateTimeFormat
 				.forPattern("MM/dd/yyyy HH:mm:ss");
 
+		events.clear();
+		
 		String line = reader.readLine();
 		LOG.warning("Reading line:" + line);
 		while (line != null) {
@@ -204,8 +231,8 @@ public class EventPusher extends Agent {
 						req = req.replaceAll("\"", "");
 						if (req.contains("(")) {
 							final ObjectNode r = JOM.createObjectNode();
-							r.put("type",
-									req.substring(0, req.indexOf("(") - 1).trim());
+							r.put("type", req
+									.substring(0, req.indexOf("(") - 1).trim());
 							r.put("agentId",
 									req.substring(req.indexOf("(") + 1,
 											req.indexOf(")")).trim());
@@ -218,10 +245,7 @@ public class EventPusher extends Agent {
 					}
 					event.set("prerequisites", reqs);
 				}
-				LOG.warning("Sending event:" + event.toString());
-				if (actuallySend == null || actuallySend) {
-					sendEvent(event);
-				}
+				events.add(event);
 			}
 			line = reader.readLine();
 
