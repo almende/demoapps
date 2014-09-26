@@ -206,11 +206,12 @@ public class EventPusher extends Agent {
 	 *
 	 * @param filename
 	 *            the filename
+	 * @return the integer
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Access(AccessType.PUBLIC)
-	public void loadEvents(@Name("filename") String filename)
+	public Integer loadEvents(@Name("filename") String filename)
 			throws IOException {
 		final BufferedReader reader = new BufferedReader(new FileReader(
 				filename));
@@ -265,6 +266,7 @@ public class EventPusher extends Agent {
 
 		}
 		reader.close();
+		return events.size();
 	}
 
 }
