@@ -9,7 +9,7 @@
 35,9/22/2014 14:32:01,Paolo,rao,Inspect finished Coffeemaker,3,finish,,
 36,9/22/2014 14:32:01,Fredrico,worker,Transport to delivery,3,start,,
 36,9/22/2014 14:49:12,Fredrico,worker,Transport to delivery,3,finish,,
-33,9/22/2014 14:49:12,Fredrico,worker,Produce Coffeemaker,3,finish,,
+31,9/22/2014 14:49:12,Fredrico,worker,Produce Coffeemaker,3,finish,,
 21,9/24/2014 9:08:00,Fredrico,worker,Produce Coffeemaker,2,start,Kitting Coffeemaker;Assemble Coffeemaker;Inspect finished Coffeemaker;Transport to delivery,
 22,9/24/2014 9:08:00,Fredrico,worker,Kitting Coffeemaker,2,start,,
 22,9/24/2014 10:36:03,Fredrico,worker,Kitting Coffeemaker,2,finish,,
