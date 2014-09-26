@@ -188,6 +188,20 @@ public class EventPusher extends Agent {
 	}
 
 	/**
+	 * Send all events.
+	 */
+	@Access(AccessType.PUBLIC)
+	public void sendAllEvents() {
+		for (ObjectNode event : events) {
+			try {
+				sendEvent(event);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * Load events.
 	 *
 	 * @param filename
@@ -204,7 +218,7 @@ public class EventPusher extends Agent {
 				.forPattern("MM/dd/yyyy HH:mm:ss");
 
 		events.clear();
-		
+
 		String line = reader.readLine();
 		LOG.warning("Reading line:" + line);
 		while (line != null) {
