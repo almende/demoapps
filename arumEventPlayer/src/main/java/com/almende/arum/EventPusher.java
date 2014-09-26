@@ -165,6 +165,8 @@ public class EventPusher extends Agent {
 	 *
 	 * @param filename
 	 *            the filename
+	 * @param actuallySend
+	 *            the actually send
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -186,14 +188,14 @@ public class EventPusher extends Agent {
 			final ObjectNode event = JOM.createObjectNode();
 			final String[] elements = line.split(",");
 			if (!elements[0].equals("jobId")) {
-				event.put("jobId", elements[0]);
+				event.put("jobId", elements[0].trim());
 				event.put("time", DateTime.parse(elements[1], formatter)
 						.toString());
-				event.put("performedBy", elements[2]);
-				event.put("type", elements[3]);
-				event.put("assignment", elements[4]);
-				event.put("productId", elements[5]);
-				event.put("operation", elements[6]);
+				event.put("performedBy", elements[2].trim());
+				event.put("type", elements[3].trim());
+				event.put("assignment", elements[4].trim());
+				event.put("productId", elements[5].trim());
+				event.put("operation", elements[6].trim());
 
 				if (elements.length > 7) {
 					final String[] requirements = elements[7].split(";");
@@ -203,21 +205,21 @@ public class EventPusher extends Agent {
 						if (req.contains("(")) {
 							final ObjectNode r = JOM.createObjectNode();
 							r.put("type",
-									req.substring(0, req.indexOf("(") - 1));
+									req.substring(0, req.indexOf("(") - 1).trim());
 							r.put("agentId",
 									req.substring(req.indexOf("(") + 1,
-											req.indexOf(")")));
+											req.indexOf(")")).trim());
 							reqs.add(r);
 						} else {
 							final ObjectNode r = JOM.createObjectNode();
-							r.put("type", req);
+							r.put("type", req.trim());
 							reqs.add(r);
 						}
 					}
 					event.set("prerequisites", reqs);
 				}
 				LOG.warning("Sending event:" + event.toString());
-				if (actuallySend != null && actuallySend) {
+				if (actuallySend == null || actuallySend) {
 					sendEvent(event);
 				}
 			}
