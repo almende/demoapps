@@ -2,6 +2,8 @@
 32,9/22/2014 9:08:00,Fredrico,worker,Kitting Coffeemaker,3,start,,
 32,9/22/2014 10:36:03,Fredrico,worker,Kitting Coffeemaker,3,finish,,
 33,9/22/2014 10:38:32,Fredrico,worker,Assemble Coffeemaker,3,start,,
+33,9/22/2014 17:38:32,Fredrico,worker,,,endOfDay,,
+33,9/23/2014 9:10:29,Fredrico,worker,,,startOfDay,,
 33,9/23/2014 13:10:29,Fredrico,worker,Assemble Coffeemaker,3,finish,,
 34,9/23/2014 13:10:29,Paolo,rao,Go to station,3,start,,
 34,9/23/2014 13:12:29,Paolo,rao,Go to station,3,finish,,
