@@ -160,6 +160,7 @@ public class EventPusher extends Agent {
 	 */
 	public static void main(final String[] args) {
 		SINGLETON.init();
+		RESTApplication.init();
 	}
 
 	/**

@@ -134,7 +134,8 @@ public class ConferenceAgent extends Agent {
 		SimpleSchedulerConfig schedulerConfig = new SimpleSchedulerConfig();
 		config.setScheduler(schedulerConfig);
 		
-		setConfig(config, true);
+		loadConfig(config);
+		
 		if (!getState().containsKey(CONTACTKEY.getKey())) {
 			getState().put(CONTACTKEY.getKey(), new HashMap<String, Info>());
 		}
@@ -158,7 +159,10 @@ public class ConferenceAgent extends Agent {
 		final WebsocketTransportConfig clientConfig = new WebsocketTransportConfig();
 		clientConfig.setServerUrl(baseUrl + getId());
 		clientConfig.setId(getId());
-		this.loadTransports(clientConfig, true);
+		this.loadTransports(clientConfig);
+		//TODO: ugly!
+		this.onBoot();
+		
 		
 		cloud = URI.create(baseUrl + getId());
 	}
